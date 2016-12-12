@@ -1,10 +1,9 @@
 .DS_Store
-
 .classpath
-.idea/
 .project
-.settings/
-bin/
-target/	
 .impl
 .iml
+.settings/
+.idea/
+target/
+bin/
