@@ -34,7 +34,6 @@ public class RTCServiceImpl implements RTCService {
             TeamPlatform.startup();
         }
 
-//        String rtcURL = "https://rtc01.aide.oit.va.gov/jazz/";
         IProgressMonitor progressMonitor = new NullProgressMonitor();
 
         teamRepository = TeamPlatform.getTeamRepositoryService().getTeamRepository(url);

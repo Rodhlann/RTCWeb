@@ -41,9 +41,6 @@
         rtcURL: null,
         userName: null
     });
-    // .run(['$location', function($location){
-    //     $location.path("/login");
-    // }]);
 
     angular.module('rtcWebApp.controllers', []);
     angular.module('rtcWebApp.services', []);

@@ -13,7 +13,6 @@
         $scope.user = user;
 
         self.openMenu = function($mdOpenMenu, ev) {
-            //originatorEv = ev;
             $mdOpenMenu(ev);
         };
 
