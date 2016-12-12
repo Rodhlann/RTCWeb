@@ -1,0 +1,21 @@
+<div ng-controller="toolbarController as ctrl">
+    <md-toolbar class="md-hue-2">
+        <div class="md-toolbar-tools">
+            <span flex>RTC Web</span>
+            <md-menu>
+                <div>
+                    <md-button class="md-icon-button mdi mdi-24px mdi-account-circle" aria-label="Account" ng-click="ctrl.openMenu($mdOpenMenu, ev)">
+                    </md-button>
+                </div>
+                <md-menu-content>
+                    <md-menu-item>
+                        <span layout-align="center">{{user.userName}}</span>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <span layout-align="center" ng-click="ctrl.logout()">Logout</span>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </div>
+    </md-toolbar>
+</div>
