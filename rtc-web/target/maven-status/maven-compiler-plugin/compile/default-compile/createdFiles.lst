@@ -1,7 +1,0 @@
-com/bah/rtc/web/controllers/WorkItemController.class
-com/bah/rtc/web/controllers/BaseController.class
-com/bah/rtc/web/AuthenticationException.class
-com/bah/rtc/web/controllers/AuthenticationController.class
-com/bah/rtc/web/AuthenticationAspect.class
-com/bah/rtc/web/controllers/DashboardController.class
-com/bah/rtc/web/RtcWebApplication.class
