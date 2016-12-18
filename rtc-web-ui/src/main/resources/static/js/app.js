@@ -2,8 +2,6 @@
 
     'use strict';
 
-    console.debug("RTC Web App Starting")
-
     angular.module('rtcWebApp', [
         'ngRoute',
         'ngResource',

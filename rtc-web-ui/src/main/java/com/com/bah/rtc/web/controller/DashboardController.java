@@ -2,6 +2,7 @@ package com.com.bah.rtc.web.controller;
 
 import com.bah.rtc.web.ProjectArea;
 import com.bah.rtc.web.RTCService;
+import com.bah.rtc.web.TeamArea;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -24,5 +25,11 @@ public class DashboardController {
     @ResponseBody
     public List<ProjectArea> getProjectAreas() {
         return rtcService.getProjectAreas();
+    }
+
+    @RequestMapping(path = "/getTeamAreas", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<TeamArea> getTeamAreas() {
+        return rtcService.getTeamAreas();
     }
 }

@@ -13,4 +13,5 @@ public interface RTCService {
     boolean isAuthenticated();
     WorkItem getWorkItem(String projectAreaName, String workItemId);
     List<ProjectArea> getProjectAreas();
+    List<TeamArea> getTeamAreas();
 }

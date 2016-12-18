@@ -3,12 +3,17 @@
 
     angular
         .module('rtcWebApp.controllers')
-        .controller('navigation', ['$scope', '$location', 'rtcWebApp.services.authService', NavigationController])
+        .controller('navigation', ['$scope', '$location', 'rtcWebApp.services.authService', 'rtcWebApp.services.progressService', NavigationController])
 
-    function NavigationController($scope, $location, authService) {
+    function NavigationController($scope, $location, authService, progressService) {
         var self = this;
 
         $scope.credentials = {};
+        $scope.processing = false;
+
+        progressService.registerCallback(function() {
+            $scope.processing = progressService.processing;
+        });
 
         authService.registerCallback(function(){
             $scope.authenticated = authService.isAuthenticated();

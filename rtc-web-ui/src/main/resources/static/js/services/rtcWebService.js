@@ -17,5 +17,9 @@
         self.getProjectAreas = function() {
             return $http.get(api.dashboard + 'getProjectAreas');
         };
+
+        self.getTeamAreas = function () {
+            return $http.get(api.dashboard + 'getTeamAreas');
+        };
     }
 })();

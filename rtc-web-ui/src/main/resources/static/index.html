@@ -15,8 +15,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="/css/app.css">
     </head>
-    <body>
-        <div ng-controller="navigation as ctrl">
+    <body layout-fill>
+        <md-content ng-controller="navigation as ctrl" ng-cloak>
             <md-toolbar class="md-hue-2">
                 <div class="md-toolbar-tools">
                     <span flex>RTC Web</span>
@@ -39,9 +39,10 @@
                     </md-menu>
                 </div>
             </md-toolbar>
-        </div>
+            <md-progress-linear ng-show="processing" md-mode="indeterminate"></md-progress-linear>
+        </md-content>
 
-        <div ng-view class="container"></div>
+        <md-content layout="row" layout-fill ng-view class="container"></md-content>
 
         <!--<div ng-view></div>-->
         <script src="/webjars/jquery/3.1.1-1/jquery.min.js"></script>
@@ -58,6 +59,7 @@
         <script src="js/app.js"></script>
         <script src="js/services/authenticationService.js"></script>
         <script src="js/services/rtcWebService.js"></script>
+        <script src="js/services/progressService.js"></script>
 
         <script src="js/controllers/homeController.js"></script>
         <script src="js/controllers/navigationController.js"></script>

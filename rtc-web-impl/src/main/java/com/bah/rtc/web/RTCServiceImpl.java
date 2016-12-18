@@ -4,6 +4,7 @@ import com.ibm.team.process.client.IProcessClientService;
 import com.ibm.team.process.client.IProcessItemService;
 import com.ibm.team.process.common.IProcessArea;
 import com.ibm.team.process.common.IProjectArea;
+import com.ibm.team.process.common.ITeamArea;
 import com.ibm.team.repository.client.ILoginHandler2;
 import com.ibm.team.repository.client.ILoginInfo2;
 import com.ibm.team.repository.client.ITeamRepository;
@@ -120,16 +121,35 @@ public class RTCServiceImpl implements RTCService {
                     projectArea.setId(processArea.getItemId().getUuidValue());
                     results.add(projectArea);
                 }
-//                else {
-//                    TeamArea teamArea = new TeamArea();
-//                    teamArea.setName(processArea.getName());
-//                    teamArea.setId(processArea.getItemId().getUuidValue());
-//                }
             }
         } catch (Exception ex) {
           throw new RuntimeException("Error getting project areas");
         }
 
         return results;
+    }
+
+    public List<TeamArea> getTeamAreas() {
+        List<TeamArea> teams = new ArrayList();
+
+        try {
+            IContributor contributor = teamRepository.loggedInContributor();
+            IProcessItemService processItemService = (IProcessItemService) teamRepository.getClientLibrary(IProcessItemService.class);
+
+            List<IProcessArea> processAreas = processItemService.findProcessAreas(contributor, null, IProcessClientService.ALL_PROPERTIES, null);
+
+            for (IProcessArea processArea : processAreas) {
+                if(processArea instanceof ITeamArea) {
+                    TeamArea teamArea = new TeamArea();
+                    teamArea.setName(processArea.getName());
+                    teamArea.setId(processArea.getItemId().getUuidValue());
+                    teams.add(teamArea);
+                }
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Error getting team areas");
+        }
+
+        return teams;
     }
 }
