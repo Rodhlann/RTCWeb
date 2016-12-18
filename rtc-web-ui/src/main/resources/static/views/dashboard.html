@@ -1,0 +1,13 @@
+<div ng-controller="dashboardController as ctrl">
+    <md-card ng-repeat="projectArea in projectAreas" >
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline">{{projectArea.name}}</span>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-actions layout="row" layout-align="end center">
+            <md-button>Action 1</md-button>
+            <md-button>Action 2</md-button>
+        </md-card-actions>
+    </md-card>
+</div>

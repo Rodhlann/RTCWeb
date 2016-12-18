@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ import java.util.List;
 public class RTCServiceImpl implements RTCService {
     private ITeamRepository teamRepository;
 
-    public void login(String url, String username, String password) {
+    public void login(String url, String username, String password) throws AuthenticationException {
         if(!TeamPlatform.isStarted()) {
             TeamPlatform.startup();
         }
@@ -42,7 +44,7 @@ public class RTCServiceImpl implements RTCService {
         try {
             teamRepository.login(progressMonitor);
         } catch (TeamRepositoryException e) {
-            e.printStackTrace();
+            throw new AuthenticationException();
         }
     }
 
@@ -112,11 +114,20 @@ public class RTCServiceImpl implements RTCService {
             List<IProcessArea> processAreas = processItemService.findProcessAreas(contributor, null, IProcessClientService.ALL_PROPERTIES, null);
 
             for (IProcessArea processArea : processAreas) {
+                ProjectArea projectArea = null;
+
                 if(processArea instanceof IProjectArea) {
-                    ProjectArea projectArea = new ProjectArea();
+                    projectArea = new ProjectArea();
                     projectArea.setName(processArea.getName());
-                    results.add(projectArea);
+                    projectArea.setId(processArea.getItemId().getUuidValue());
+
+                } else {
+                    ProjectTeamArea teamArea = new ProjectTeamArea();
+                    teamArea.setName(processArea.getName());
+                    teamArea.setId(processArea.getItemId().getUuidValue());
                 }
+
+                results.add(projectArea);
             }
         } catch (Exception ex) {
           throw new RuntimeException("Error getting project areas");

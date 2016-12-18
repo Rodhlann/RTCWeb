@@ -21,7 +21,7 @@ public class AuthenticationController extends BaseController {
     @RequestMapping(path = "/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public boolean login(@RequestParam final String userName, @RequestParam final String password) {
-        rtcService.login(rtcURL, userName, password);
+//        rtcService.login(rtcURL, userName, password);
         return true;
     }
 
