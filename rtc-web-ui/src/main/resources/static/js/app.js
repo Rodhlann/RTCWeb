@@ -24,9 +24,28 @@
                 templateUrl : 'login.html',
                 controller : 'navigation'
             })
+            .when('/dashboard', {
+                templateUrl : '/views/dashboard.html',
+                controller : 'dashboard'
+            })
             .otherwise('/');
 
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
+
+        $httpProvider.interceptors.push(function($q, $injector, $location) {
+            return {
+                responseError: function(rejection) {
+                    if (rejection.status === 401) {
+                        $location.path("/login");
+                    }
+
+                    /* If not a 401, do nothing with this error.
+                     * This is necessary to make a `responseError`
+                     * interceptor a no-op. */
+                    return $q.reject(rejection);
+                }
+            };
+        });
     }])
     .config(['$mdThemingProvider', function($mdThemingProvider) {
         $mdThemingProvider.theme('default')

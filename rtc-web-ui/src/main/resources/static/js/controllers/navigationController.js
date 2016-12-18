@@ -17,13 +17,17 @@
 
         authService.authenticate();
 
+        self.showLogin = function() {
+            $location.path('/login');
+        };
+
         $scope.login = function() {
             authService.authenticate($scope.credentials, function() {
                 $scope.authenticated = authService.isAuthenticated();
 
                 if($scope.authenticated) {
                     $scope.error = false;
-                    $location.path('/');
+                    $location.path('/dashboard');
                 } else {
                     $scope.error = true;
                     $location.path('/login');
@@ -31,7 +35,11 @@
             })
         };
 
-        $scope.logout = function() {
+        self.openMenu = function($mdOpenMenu, ev) {
+            $mdOpenMenu(ev);
+        };
+
+        self.logout = function() {
             authService.logout(function() {
                 $scope.authenticated = authService.isAuthenticated();
                 $location.path("/");

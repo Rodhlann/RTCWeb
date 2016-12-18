@@ -114,20 +114,17 @@ public class RTCServiceImpl implements RTCService {
             List<IProcessArea> processAreas = processItemService.findProcessAreas(contributor, null, IProcessClientService.ALL_PROPERTIES, null);
 
             for (IProcessArea processArea : processAreas) {
-                ProjectArea projectArea = null;
-
                 if(processArea instanceof IProjectArea) {
-                    projectArea = new ProjectArea();
+                    ProjectArea projectArea = new ProjectArea();
                     projectArea.setName(processArea.getName());
                     projectArea.setId(processArea.getItemId().getUuidValue());
-
-                } else {
-                    ProjectTeamArea teamArea = new ProjectTeamArea();
-                    teamArea.setName(processArea.getName());
-                    teamArea.setId(processArea.getItemId().getUuidValue());
+                    results.add(projectArea);
                 }
-
-                results.add(projectArea);
+//                else {
+//                    TeamArea teamArea = new TeamArea();
+//                    teamArea.setName(processArea.getName());
+//                    teamArea.setId(processArea.getItemId().getUuidValue());
+//                }
             }
         } catch (Exception ex) {
           throw new RuntimeException("Error getting project areas");

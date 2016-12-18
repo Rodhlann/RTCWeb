@@ -16,13 +16,31 @@
         <link rel="stylesheet" href="/css/app.css">
     </head>
     <body>
-        <div ng-controller="navigation" class="container">
-            <ul class="nav nav-pills" role="tablist">
-                <li class="active"><a href="#/">home</a></li>
-                <li ng-show="!authenticated"><a href="#/login">login</a></li>
-                <li ng-show="authenticated"><a href="" ng-click="logout()">logout</a></li>
-            </ul>
+        <div ng-controller="navigation as ctrl">
+            <md-toolbar class="md-hue-2">
+                <div class="md-toolbar-tools">
+                    <span flex>RTC Web</span>
+                    <md-menu>
+                        <div>
+                            <md-button class="md-icon-button mdi mdi-24px mdi-account-circle" aria-label="Account" ng-click="ctrl.openMenu($mdOpenMenu, ev)">
+                            </md-button>
+                        </div>
+                        <md-menu-content>
+                            <md-menu-item ng-show="authenticated">
+                                <span layout-align="center">{{username}}</span>
+                            </md-menu-item>
+                            <md-menu-item ng-show="authenticated">
+                                <span layout-align="center" ng-click="ctrl.logout()">Logout</span>
+                            </md-menu-item>
+                            <md-menu-item ng-show="!authenticated">
+                                <span layout-align="center" ng-click="ctrl.showLogin()">Login</span>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </div>
+            </md-toolbar>
         </div>
+
         <div ng-view class="container"></div>
 
         <!--<div ng-view></div>-->
@@ -39,8 +57,11 @@
 
         <script src="js/app.js"></script>
         <script src="js/services/authenticationService.js"></script>
+        <script src="js/services/rtcWebService.js"></script>
+
         <script src="js/controllers/homeController.js"></script>
         <script src="js/controllers/navigationController.js"></script>
+        <script src="js/controllers/dashboardController.js"></script>
 
         <link rel="stylesheet" href="/webjars/bootstrap/3.3.7-1/css/bootstrap.css"/>
         <link rel="stylesheet" href="/webjars/angular-ui/0.4.0/angular-ui.min.css"/>
