@@ -36,5 +36,8 @@
                 progressService.hideProgressBar();
             })
         };
+
+        self.getProjectAreas();
+        self.getTeamAreas();
     }
 })();
