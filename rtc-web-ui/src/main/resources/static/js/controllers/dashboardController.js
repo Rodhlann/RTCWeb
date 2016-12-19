@@ -10,6 +10,7 @@
 
         $scope.projectAreas = [];
         $scope.teamAreas = [];
+        $scope.sprints = [];
 
         // $scope.workitems = [];
         //
@@ -20,6 +21,15 @@
         //         console.debug('unable to get work items');
         //     });
         // };
+
+        self.getSprints = function(projectAreaName) {
+            progressService.showProgressBar();
+            rtcService.getSprints(projectAreaName)
+                .then(function(response) {
+                    $scope.sprints = response.data;
+                    progressService.hideProgressBar();
+                });
+        };
 
         self.getProjectAreas = function() {
             progressService.showProgressBar();

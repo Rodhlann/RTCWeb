@@ -8,6 +8,7 @@
         'ngMaterial',
         'ngAnimate',
         'ngMdIcons',
+        'ngMessages',
 
         'rtcWebApp.controllers',
         'rtcWebApp.services'
@@ -24,7 +25,8 @@
             })
             .when('/dashboard', {
                 templateUrl : '/views/dashboard.html',
-                controller : 'dashboard'
+                controller : 'dashboard',
+                controllerAs: 'ctrl'
             })
             .otherwise('/');
 

@@ -3,9 +3,9 @@
 
     angular
         .module('rtcWebApp.controllers')
-        .controller('navigation', ['$scope', '$location', 'rtcWebApp.services.authService', 'rtcWebApp.services.progressService', NavigationController])
+        .controller('navigation', ['$scope', '$location', '$mdToast', 'rtcWebApp.services.authService', 'rtcWebApp.services.progressService', NavigationController])
 
-    function NavigationController($scope, $location, authService, progressService) {
+    function NavigationController($scope, $location, $mdToast, authService, progressService) {
         var self = this;
 
         $scope.credentials = {};
@@ -27,13 +27,21 @@
         };
 
         $scope.login = function() {
+            progressService.showProgressBar();
             authService.authenticate($scope.credentials, function() {
                 $scope.authenticated = authService.isAuthenticated();
+                progressService.hideProgressBar();
 
                 if($scope.authenticated) {
                     $scope.error = false;
                     $location.path('/dashboard');
                 } else {
+                    // $mdToast.show(
+                    //     $mdToast.simple()
+                    //         .textContent('Invalid Username or Password')
+                    //         .position('top right')
+                    //         .hideDelay(0)
+                    // );
                     $scope.error = true;
                     $location.path('/login');
                 }
@@ -45,8 +53,10 @@
         };
 
         self.logout = function() {
+            progressService.showProgressBar();
             authService.logout(function() {
                 $scope.authenticated = authService.isAuthenticated();
+                progressService.hideProgressBar();
                 $location.path("/");
             });
         };

@@ -2,9 +2,14 @@ package com.bah.rtc.web;
 
 import com.ibm.team.process.client.IProcessClientService;
 import com.ibm.team.process.client.IProcessItemService;
+import com.ibm.team.process.common.IDevelopmentLine;
+import com.ibm.team.process.common.IDevelopmentLineHandle;
+import com.ibm.team.process.common.IIterationHandle;
 import com.ibm.team.process.common.IProcessArea;
 import com.ibm.team.process.common.IProjectArea;
 import com.ibm.team.process.common.ITeamArea;
+import com.ibm.team.process.internal.common.Iteration;
+import com.ibm.team.repository.client.IItemManager;
 import com.ibm.team.repository.client.ILoginHandler2;
 import com.ibm.team.repository.client.ILoginInfo2;
 import com.ibm.team.repository.client.ITeamRepository;
@@ -23,6 +28,7 @@ import javax.naming.AuthenticationException;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -116,6 +122,7 @@ public class RTCServiceImpl implements RTCService {
 
             for (IProcessArea processArea : processAreas) {
                 if(processArea instanceof IProjectArea) {
+                    ((com.ibm.team.process.internal.common.ProjectArea)processArea).getDevelopmentLines();
                     ProjectArea projectArea = new ProjectArea();
                     projectArea.setName(processArea.getName());
                     projectArea.setId(processArea.getItemId().getUuidValue());
@@ -151,5 +158,52 @@ public class RTCServiceImpl implements RTCService {
         }
 
         return teams;
+    }
+
+    public List<Sprint> getSprints(String projectAreaName) {
+        List<Sprint> sprints = new ArrayList();
+
+        try {
+            IProcessItemService processItemService = (IProcessItemService) teamRepository.getClientLibrary(IProcessItemService.class);
+
+            URI projectAreaURI = URI.create(projectAreaName.replace(" ", "%20"));
+            IProjectArea projectArea = (IProjectArea) processItemService.findProcessArea(projectAreaURI, null, null);
+
+            if(projectArea != null) {
+                IDevelopmentLineHandle[] developmentHandles = projectArea.getDevelopmentLines();
+                List<IDevelopmentLine> developmentLines = teamRepository.itemManager().fetchCompleteItems(Arrays.asList(developmentHandles), IItemManager.DEFAULT, null);
+
+                for (IDevelopmentLine developmentLine : developmentLines) {
+                    List<IIterationHandle> iterationHandles = Arrays.asList(developmentLine.getIterations());
+                    sprints.addAll(getPlannedForFromIterations(iterationHandles));
+                }
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Error getting project area sprints");
+        }
+
+        return sprints;
+    }
+
+    private List<Sprint> getPlannedForFromIterations(List<IIterationHandle> iterationHandles) throws TeamRepositoryException {
+        List<Sprint> plannedFor = new ArrayList();
+
+        List<Iteration> iterationLines = teamRepository.itemManager().fetchCompleteItems(iterationHandles,IItemManager.DEFAULT, null);
+
+        for(Iteration iteration : iterationLines) {
+            if(iteration != null && iteration.getName() != null && !iteration.isArchived()) {
+                Sprint sprint = new Sprint();
+                sprint.setName(iteration.getName());
+                sprint.setStartDate(iteration.getStartDate());
+                sprint.setEndDate(iteration.getEndDate());
+                plannedFor.add(sprint);
+
+                if(iteration.getChildren() != null) {
+                    plannedFor.addAll(getPlannedForFromIterations(Arrays.asList(iteration.getChildren())));
+                }
+            }
+        }
+
+        return plannedFor;
     }
 }

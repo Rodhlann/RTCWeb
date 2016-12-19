@@ -21,5 +21,9 @@
         self.getTeamAreas = function () {
             return $http.get(api.dashboard + 'getTeamAreas');
         };
+
+        self.getSprints = function(projectAreaName) {
+            return $http.get(api.dashboard + 'getSprints?projectAreaName=' + projectAreaName);
+        };
     }
 })();

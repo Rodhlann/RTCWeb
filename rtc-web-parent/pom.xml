@@ -17,6 +17,7 @@
         <spring.boot.version>1.4.0.RELEASE</spring.boot.version>
         <spring.framework.version>4.3.4.RELEASE</spring.framework.version>
         <angular.js.version>1.5.8</angular.js.version>
+        <angular.messages.version>1.6.0</angular.messages.version>
         <angular.ui.version>0.4.0-3</angular.ui.version>
         <bootstrap.version>3.3.7-1</bootstrap.version>
         <angular.material.version>1.1.1</angular.material.version>
@@ -69,6 +70,12 @@
                 <groupId>org.webjars</groupId>
                 <artifactId>angular-ui</artifactId>
                 <version>${angular.ui.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars.bower</groupId>
+                <artifactId>angular-messages</artifactId>
+                <version>${angular.messages.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>

@@ -14,4 +14,5 @@ public interface RTCService {
     WorkItem getWorkItem(String projectAreaName, String workItemId);
     List<ProjectArea> getProjectAreas();
     List<TeamArea> getTeamAreas();
+    List<Sprint> getSprints(String projectAreaName);
 }
