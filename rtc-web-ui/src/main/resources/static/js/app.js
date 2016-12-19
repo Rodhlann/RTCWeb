@@ -16,8 +16,9 @@
     .config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
         $routeProvider
             .when('/', {
-                templateUrl : 'home.html',
-                controller : 'home'
+                templateUrl : '/views/dashboard.html',
+                controller : 'dashboard',
+                controllerAs: 'ctrl'
             })
             .when('/login', {
                 templateUrl : 'login.html',
