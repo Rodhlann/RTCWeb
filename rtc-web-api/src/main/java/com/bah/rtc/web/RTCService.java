@@ -11,7 +11,7 @@ public interface RTCService {
     void login(String url, String username, String password) throws AuthenticationException;
     void logout();
     boolean isAuthenticated();
-    WorkItem getWorkItem(String projectAreaName, String workItemId);
+    List<WorkItem> getWorkItems(String projectAreaName, String sprint);
     List<ProjectArea> getProjectAreas();
     List<TeamArea> getTeamAreas();
     List<Sprint> getSprints(String projectAreaName);

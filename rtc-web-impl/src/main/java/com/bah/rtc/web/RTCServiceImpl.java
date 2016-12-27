@@ -4,6 +4,7 @@ import com.ibm.team.process.client.IProcessClientService;
 import com.ibm.team.process.client.IProcessItemService;
 import com.ibm.team.process.common.IDevelopmentLine;
 import com.ibm.team.process.common.IDevelopmentLineHandle;
+import com.ibm.team.process.common.IIteration;
 import com.ibm.team.process.common.IIterationHandle;
 import com.ibm.team.process.common.IProcessArea;
 import com.ibm.team.process.common.IProjectArea;
@@ -18,8 +19,17 @@ import com.ibm.team.repository.client.login.UsernameAndPasswordLoginInfo;
 import com.ibm.team.repository.common.IContributor;
 import com.ibm.team.repository.common.TeamRepositoryException;
 import com.ibm.team.workitem.client.IAuditableClient;
+import com.ibm.team.workitem.client.IQueryClient;
 import com.ibm.team.workitem.client.IWorkItemClient;
+import com.ibm.team.workitem.common.expression.AttributeExpression;
+import com.ibm.team.workitem.common.expression.IQueryableAttribute;
+import com.ibm.team.workitem.common.expression.IQueryableAttributeFactory;
+import com.ibm.team.workitem.common.expression.QueryableAttributes;
+import com.ibm.team.workitem.common.expression.Term;
+import com.ibm.team.workitem.common.model.AttributeOperation;
 import com.ibm.team.workitem.common.model.IWorkItem;
+import com.ibm.team.workitem.common.query.IQueryResult;
+import com.ibm.team.workitem.common.query.IResolvedResult;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.springframework.stereotype.Service;
@@ -75,7 +85,8 @@ public class RTCServiceImpl implements RTCService {
         }
     }
 
-    public WorkItem getWorkItem(String projectAreaName, String workItemId) {
+    public List<WorkItem> getWorkItems(String projectAreaName, String sprint) {
+        List<WorkItem> workItems = new ArrayList();
 
         try {
             IProcessClientService processClient = (IProcessClientService) teamRepository
@@ -93,17 +104,45 @@ public class RTCServiceImpl implements RTCService {
                 throw new RuntimeException("Project area not found.");
             }
 
-            int id = new Integer(workItemId).intValue();
 
-            IWorkItem workItem = workItemClient.findWorkItemById(id,
-                    IWorkItem.FULL_PROFILE, null);
+            List<IDevelopmentLine> developmentLines = teamRepository.itemManager().fetchCompleteItems(Arrays.asList(projectArea.getDevelopmentLines()), IItemManager.DEFAULT, null);
+            IIteration sprintHandle = null;
+            List<Iteration> iterations = new ArrayList();
 
-            WorkItem result = new WorkItem();
-            result.setId(Long.valueOf(workItem.getId()));
-            result.setTitle(workItem.getHTMLSummary().getPlainText());
-            result.setDescription(workItem.getHTMLDescription().getPlainText());
+            for (IDevelopmentLine developmentLine : developmentLines) {
+                iterations.addAll(getIterations(Arrays.asList(developmentLine.getIterations())));
+                List<IIterationHandle> iterationHandles = Arrays.asList(developmentLine.getIterations());
+            }
 
-            return result;
+            for(Iteration iteration : iterations) {
+                if(iteration.getName().equals(sprint)){
+                    sprintHandle = iteration;
+                    break;
+                }
+            }
+
+            IQueryableAttributeFactory factory= QueryableAttributes.getFactory(IWorkItem.ITEM_TYPE);
+            IQueryableAttribute projectAreaAttribute = factory.findAttribute(projectArea, IWorkItem.TARGET_PROPERTY, auditableClient, null);
+            AttributeExpression projectAreaExpression = new AttributeExpression(projectAreaAttribute, AttributeOperation.EQUALS, sprintHandle);
+            Term term = new Term(Term.Operator.AND);
+            term.add(projectAreaExpression);
+
+            IQueryClient queryClient = (IQueryClient) teamRepository.getClientLibrary(IQueryClient.class);
+            IQueryResult<IResolvedResult<IWorkItem>> results = queryClient.getResolvedExpressionResults(projectArea, term, IWorkItem.FULL_PROFILE);
+
+            while(results.hasNext(null)){
+                IResolvedResult<IWorkItem> resolvedWorkItem = results.next(null);
+                IWorkItem workItem = resolvedWorkItem.getItem();
+
+                WorkItem wi = new WorkItem();
+                wi.setId(Long.valueOf(workItem.getId()));
+                wi.setTitle(workItem.getHTMLSummary().getPlainText());
+                wi.setDescription(workItem.getHTMLDescription().getPlainText());
+
+                workItems.add(wi);
+            }
+
+            return workItems;
         }
         catch (Exception ex)
         {
@@ -200,6 +239,24 @@ public class RTCServiceImpl implements RTCService {
 
                 if(iteration.getChildren() != null) {
                     plannedFor.addAll(getPlannedForFromIterations(Arrays.asList(iteration.getChildren())));
+                }
+            }
+        }
+
+        return plannedFor;
+    }
+
+    private List<Iteration> getIterations(List<IIterationHandle> iterationHandles) throws TeamRepositoryException {
+        List<Iteration> plannedFor = new ArrayList();
+
+        List<Iteration> iterationLines = teamRepository.itemManager().fetchCompleteItems(iterationHandles,IItemManager.DEFAULT, null);
+
+        for(Iteration iteration : iterationLines) {
+            if(iteration != null && iteration.getName() != null && !iteration.isArchived()) {
+                plannedFor.add(iteration);
+
+                if(iteration.getChildren() != null) {
+                    plannedFor.addAll(getIterations(Arrays.asList(iteration.getChildren())));
                 }
             }
         }

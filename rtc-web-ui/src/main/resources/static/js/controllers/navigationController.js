@@ -36,12 +36,6 @@
                     $scope.error = false;
                     $location.path('/dashboard');
                 } else {
-                    // $mdToast.show(
-                    //     $mdToast.simple()
-                    //         .textContent('Invalid Username or Password')
-                    //         .position('top right')
-                    //         .hideDelay(0)
-                    // );
                     $scope.error = true;
                     $location.path('/login');
                 }

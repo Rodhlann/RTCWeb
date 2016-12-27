@@ -1,4 +1,4 @@
-package com.bah.rtc.web.controllers;
+package com.com.bah.rtc.web.controller;
 
 import com.bah.rtc.web.RTCService;
 import com.bah.rtc.web.WorkItem;

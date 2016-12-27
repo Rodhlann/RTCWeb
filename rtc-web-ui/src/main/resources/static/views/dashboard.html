@@ -1,34 +1,67 @@
-<md-content layout="column" layout-fill>
-    <md-card ng-repeat="projectArea in projectAreas" ng-click="ctrl.getSprints(projectArea.name)">
+<md-content layout="column">
+    <md-input-container>
+        <label>Project Area</label>
+        <md-select id="paSelect" ng-model="selectedProjectArea" ng-change="ctrl.getSprints()">
+            <md-option ng-repeat="projectArea in projectAreas" ng-value="projectArea">
+                {{projectArea.name}}
+            </md-option>
+        </md-select>
+    </md-input-container>
+    <md-input-container>
+        <label>Sprint</label>
+        <md-select id="sprintSelect" ng-model="selectedSprint" ng-change="ctrl.getWorkItems()" >
+            <md-option ng-repeat="sprint in sprints | orderBy : '-endDate'" ng-value="sprint.name">
+                {{sprint.name}}
+            </md-option>
+        </md-select>
+    </md-input-container>
+</md-content>
+
+<md-content layout="column" flex>
+    <md-card ng-repeat="workItem in workItems" flex>
         <md-card-title>
             <md-card-title-text>
-                <span class="md-headline">{{projectArea.name}}</span>
+                <span>{{workItem.title}}</span>
             </md-card-title-text>
         </md-card-title>
-        <!--<md-card-actions layout="row" layout-align="end center">-->
-            <!--<md-button>Action 1</md-button>-->
-            <!--<md-button>Action 2</md-button>-->
-        <!--</md-card-actions>-->
-    </md-card>
-    <md-card ng-repeat="teamArea in teamAreas" ng-click="ctrl.getSprints(teamArea.name)">
-        <md-card-title>
-            <md-card-title-text>
-                <span class="md-headline">{{teamArea.name}}</span>
-            </md-card-title-text>
-        </md-card-title>
-        <!--<md-card-actions layout="row" layout-align="end center">-->
-            <!--<md-button>Action 1</md-button>-->
-            <!--<md-button>Action 2</md-button>-->
-        <!--</md-card-actions>-->
+        <md-card-content>
+            <span>{{workItem.description}}</span>
+        </md-card-content>
     </md-card>
 </md-content>
-<md-content md-scroll-y>
-    <md-card ng-repeat="sprint in sprints | orderBy:'-endDate'">
-        <md-card-title>
-            <md-card-title-text>
-                <span class="md-headline">{{sprint.name}}</span>
-                <span class="md-subhead">{{sprint.startDate | date:'shortDate'}} - {{sprint.endDate | date:'shortDate'}}</span>
-            </md-card-title-text>
-        </md-card-title>
-    </md-card>
-</md-content>
+
+
+<!--<md-content layout="column" layout-fill>-->
+    <!--<md-card ng-repeat="projectArea in projectAreas" ng-click="ctrl.getSprints(projectArea.name)">-->
+        <!--<md-card-title>-->
+            <!--<md-card-title-text>-->
+                <!--<span class="md-headline">{{projectArea.name}}</span>-->
+            <!--</md-card-title-text>-->
+        <!--</md-card-title>-->
+        <!--&lt;!&ndash;<md-card-actions layout="row" layout-align="end center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-button>Action 1</md-button>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-button>Action 2</md-button>&ndash;&gt;-->
+        <!--&lt;!&ndash;</md-card-actions>&ndash;&gt;-->
+    <!--</md-card>-->
+    <!--<md-card ng-repeat="teamArea in teamAreas" ng-click="ctrl.getSprints(teamArea.name)">-->
+        <!--<md-card-title>-->
+            <!--<md-card-title-text>-->
+                <!--<span class="md-headline">{{teamArea.name}}</span>-->
+            <!--</md-card-title-text>-->
+        <!--</md-card-title>-->
+        <!--&lt;!&ndash;<md-card-actions layout="row" layout-align="end center">&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-button>Action 1</md-button>&ndash;&gt;-->
+            <!--&lt;!&ndash;<md-button>Action 2</md-button>&ndash;&gt;-->
+        <!--&lt;!&ndash;</md-card-actions>&ndash;&gt;-->
+    <!--</md-card>-->
+<!--</md-content>-->
+<!--<md-content md-scroll-y>-->
+    <!--<md-card ng-repeat="sprint in sprints | orderBy:'-endDate'">-->
+        <!--<md-card-title>-->
+            <!--<md-card-title-text>-->
+                <!--<span class="md-headline">{{sprint.name}}</span>-->
+                <!--<span class="md-subhead">{{sprint.startDate | date:'shortDate'}} - {{sprint.endDate | date:'shortDate'}}</span>-->
+            <!--</md-card-title-text>-->
+        <!--</md-card-title>-->
+    <!--</md-card>-->
+<!--</md-content>-->

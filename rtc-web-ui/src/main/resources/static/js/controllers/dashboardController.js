@@ -11,20 +11,22 @@
         $scope.projectAreas = [];
         $scope.teamAreas = [];
         $scope.sprints = [];
+        $scope.workItems = [];
+        $scope.today = new Date();
+        $scope.selectedProjectArea = null;
+        $scope.selectedSprint = null;
 
-        // $scope.workitems = [];
-        //
-        // self.getWorkItems = function() {
-        //     rtcWebAppService.getWorkItems().then(function(response){
-        //         $scope.workitems.push(response.data);
-        //     }, function(response) {
-        //         console.debug('unable to get work items');
-        //     });
-        // };
+        self.getWorkItems = function() {
+            rtcService.getWorkItems($scope.selectedProjectArea.name, $scope.selectedSprint).then(function(response){
+                $scope.workItems = response.data;
+            }, function(response) {
+                console.debug('unable to get work items');
+            });
+        };
 
-        self.getSprints = function(projectAreaName) {
+        self.getSprints = function() {
             progressService.showProgressBar();
-            rtcService.getSprints(projectAreaName)
+            rtcService.getSprints($scope.selectedProjectArea.name)
                 .then(function(response) {
                     $scope.sprints = response.data;
                     progressService.hideProgressBar();
@@ -35,7 +37,9 @@
             progressService.showProgressBar();
             rtcService.getProjectAreas().then(function(response){
                 $scope.projectAreas = response.data;
+                $scope.selectedProjectArea = $scope.projectAreas[0];
                 progressService.hideProgressBar();
+                self.getSprints();
             });
         };
 
@@ -48,6 +52,6 @@
         };
 
         self.getProjectAreas();
-        self.getTeamAreas();
+        // self.getTeamAreas();
     }
 })();

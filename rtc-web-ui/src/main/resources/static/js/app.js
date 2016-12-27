@@ -60,6 +60,9 @@
         authenticate: 'auth',
         dashboard: 'dashboard/',
         workitem: 'workitem/'
+    })
+    .value('version', {
+       angular: '1.6.0'
     });
 
     angular.module('rtcWebApp.controllers', []);
