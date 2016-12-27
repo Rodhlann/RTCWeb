@@ -1,4 +1,4 @@
-<md-content layout="column">
+<md-content layout="column" layout-fill>
     <md-input-container>
         <label>Project Area</label>
         <md-select id="paSelect" ng-model="selectedProjectArea" ng-change="ctrl.getSprints()">
@@ -17,20 +17,22 @@
     </md-input-container>
 </md-content>
 
-<md-content layout="column" flex>
-    <md-card ng-repeat="workItem in workItems" flex>
-        <md-card-title>
-            <md-card-title-text>
-                <span>{{workItem.title}}</span>
-            </md-card-title-text>
-        </md-card-title>
-        <md-card-content>
-            <span>{{workItem.description}}</span>
-        </md-card-content>
-    </md-card>
+<md-content layout="column" layout-fill>
+    <md-grid-list>
+        <md-content layout="column" flex>
+            <md-card ng-repeat="workItem in workItems" flex>
+                <md-card-title>
+                    <md-card-title-text>
+                        <span>{{workItem.title}}</span>
+                    </md-card-title-text>
+                </md-card-title>
+                <md-card-content>
+                    <span>{{workItem.description}}</span>
+                </md-card-content>
+            </md-card>
+        </md-content>
+    </md-grid-list>
 </md-content>
-
-
 <!--<md-content layout="column" layout-fill>-->
     <!--<md-card ng-repeat="projectArea in projectAreas" ng-click="ctrl.getSprints(projectArea.name)">-->
         <!--<md-card-title>-->

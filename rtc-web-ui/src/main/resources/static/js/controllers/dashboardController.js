@@ -17,8 +17,10 @@
         $scope.selectedSprint = null;
 
         self.getWorkItems = function() {
+            progressService.showProgressBar();
             rtcService.getWorkItems($scope.selectedProjectArea.name, $scope.selectedSprint).then(function(response){
                 $scope.workItems = response.data;
+                progressService.hideProgressBar();
             }, function(response) {
                 console.debug('unable to get work items');
             });

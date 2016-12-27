@@ -49,7 +49,7 @@ public class RTCServiceImpl implements RTCService {
     private ITeamRepository teamRepository;
 
     public void login(String url, String username, String password) throws AuthenticationException {
-        if(!TeamPlatform.isStarted()) {
+        if(!isAuthenticated()) {
             TeamPlatform.startup();
         }
 
@@ -78,11 +78,17 @@ public class RTCServiceImpl implements RTCService {
     }
 
     public void logout() {
-        if(TeamPlatform.isStarted() && teamRepository != null && teamRepository.loggedIn())
+        if(isAuthenticated())
         {
             teamRepository.logout();
             TeamPlatform.shutdown();
         }
+    }
+
+    private IProjectArea getProjectArea(String projectAreaName) throws TeamRepositoryException {
+        IProcessClientService processClient = (IProcessClientService) teamRepository.getClientLibrary(IProcessClientService.class);
+        URI uri = URI.create(projectAreaName.replaceAll(" ", "%20"));
+        return (IProjectArea) processClient.findProcessArea(uri, null, null);
     }
 
     public List<WorkItem> getWorkItems(String projectAreaName, String sprint) {
@@ -96,14 +102,11 @@ public class RTCServiceImpl implements RTCService {
             IWorkItemClient workItemClient = (IWorkItemClient) teamRepository
                     .getClientLibrary(IWorkItemClient.class);
 
-            URI uri = URI.create(projectAreaName.replaceAll(" ", "%20"));
-            IProjectArea projectArea = (IProjectArea) processClient
-                    .findProcessArea(uri, null, null);
+
+            IProjectArea projectArea = getProjectArea(projectAreaName);
             if (projectArea == null) {
-                System.out.println("Project area not found.");
                 throw new RuntimeException("Project area not found.");
             }
-
 
             List<IDevelopmentLine> developmentLines = teamRepository.itemManager().fetchCompleteItems(Arrays.asList(projectArea.getDevelopmentLines()), IItemManager.DEFAULT, null);
             IIteration sprintHandle = null;
@@ -205,16 +208,17 @@ public class RTCServiceImpl implements RTCService {
         try {
             IProcessItemService processItemService = (IProcessItemService) teamRepository.getClientLibrary(IProcessItemService.class);
 
-            URI projectAreaURI = URI.create(projectAreaName.replace(" ", "%20"));
-            IProjectArea projectArea = (IProjectArea) processItemService.findProcessArea(projectAreaURI, null, null);
+            IProjectArea projectArea = getProjectArea(projectAreaName);
 
             if(projectArea != null) {
                 IDevelopmentLineHandle[] developmentHandles = projectArea.getDevelopmentLines();
                 List<IDevelopmentLine> developmentLines = teamRepository.itemManager().fetchCompleteItems(Arrays.asList(developmentHandles), IItemManager.DEFAULT, null);
 
                 for (IDevelopmentLine developmentLine : developmentLines) {
-                    List<IIterationHandle> iterationHandles = Arrays.asList(developmentLine.getIterations());
-                    sprints.addAll(getPlannedForFromIterations(iterationHandles));
+                    if(!developmentLine.isArchived()) {
+                        List<IIterationHandle> iterationHandles = Arrays.asList(developmentLine.getIterations());
+                        sprints.addAll(getPlannedForFromIterations(iterationHandles));
+                    }
                 }
             }
         } catch (Exception ex) {
