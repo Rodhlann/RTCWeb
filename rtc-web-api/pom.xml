@@ -6,7 +6,7 @@
 
     <parent>
         <artifactId>rtc-web-parent</artifactId>
-        <groupId>com.bah.rtc</groupId>
+        <groupId>com.solo.tech</groupId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../rtc-web-parent/pom.xml</relativePath>
     </parent>
