@@ -18,10 +18,10 @@
         $scope.RFD = null;
         $scope.InProgress = null;
         $scope.Done = null;
+        $scope.IST = null;
 
         $scope.chartData = [];
         $scope.chartLabels = [];
-        $scope.chartSeries = [];
 
         self.getWorkItems = function() {
             progressService.showProgressBar();
@@ -31,30 +31,20 @@
 
                 $scope.closed = $filter('filter')($scope.workItems, {status: 'Closed'} || {status: 'Delivered'});
                 $scope.open = $filter('filter')($scope.workItems, {status: 'New'} || {status: 'Not Done'} || {status: 'Ready for Sizing'} || {status: 'Ready for Dev'});
-                $scope.working = $filter('filter')($scope.workItems, {status: 'In Development'} || {status: 'In Progress'} || {status: 'In Scrum Test'});
-                // $scope.open =  $filter('filterOpen')(response.data, {status: 'New'});
-                //
-                // $scope.open1 = $filter('filterOpen')(response.data, {status: 'New'} || {status: 'Not Done'});
-
-                // $scope.open = $filter('filterOpen')($scope.workItems, {status: 'New'} || {status: 'Not Done'} || {status: 'Ready for Sizing'} || {status: 'Ready for Dev'});
-                // $scope.ip = $filter('filterInProgress')($scope.workItems, {status: 'In Development'} || {status: 'In Progress'} || {status: 'In Scrum Test'});
-                // $scope.closed = $filter('filterDone')($scope.workItems, {status: 'Closed'} || {status: 'Delivered'});
+                $scope.working = $filter('filter')($scope.workItems, {status: 'In Development'} || {status: 'In Progress'});
+                $scope.scrumTest = $filter('filter')($scope.workItems, {status: 'In Scrum Test'});
 
                 $scope.chartData = [];
                 $scope.chartData.push($scope.open.length);
                 $scope.chartData.push($scope.working.length);
+                $scope.chartData.push($scope.scrumTest.length);
                 $scope.chartData.push($scope.closed.length);
-
-                // $scope.chartData.push($filter('RFD')($scope.workItems, {status:'New'} || {status: 'Not Done'} || {status: 'Ready for Sizing'} || {status: 'Ready for Dev'}));
-                // $scope.chartData.push($filter('InProgress')($scope.workItems, {status:'In Development'} || {status: 'In Progress'} || {status: 'In Scrum Test'}));
-                // $scope.chartData.push($filter('Done')($scope.workItems, {status:'Closed'} || {status: 'Delivered'}));
 
                 $scope.chartLabels = [];
                 $scope.chartLabels.push('Ready For Dev');
                 $scope.chartLabels.push('In Progress');
+                $scope.chartLabels.push('In Scrum Test');
                 $scope.chartLabels.push('Done');
-
-                $scope.chartSeries.push(['RFD', 'IP', 'Done']);
 
                 progressService.hideProgressBar();
             }, function(response) {
