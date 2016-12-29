@@ -9,6 +9,9 @@ public class WorkItem implements Serializable {
     private Long id;
     private String title;
     private String description;
+    private User owner;
+    private String status;
+    private WorkItemType type;
 
     public Long getId() {
         return id;
@@ -32,5 +35,29 @@ public class WorkItem implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public WorkItemType getType() {
+        return type;
+    }
+
+    public void setType(WorkItemType type) {
+        this.type = type;
     }
 }

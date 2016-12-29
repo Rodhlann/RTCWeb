@@ -4,7 +4,6 @@ import com.ibm.team.process.client.IProcessClientService;
 import com.ibm.team.process.client.IProcessItemService;
 import com.ibm.team.process.common.IDevelopmentLine;
 import com.ibm.team.process.common.IDevelopmentLineHandle;
-import com.ibm.team.process.common.IIteration;
 import com.ibm.team.process.common.IIterationHandle;
 import com.ibm.team.process.common.IProcessArea;
 import com.ibm.team.process.common.IProjectArea;
@@ -15,21 +14,21 @@ import com.ibm.team.repository.client.ILoginHandler2;
 import com.ibm.team.repository.client.ILoginInfo2;
 import com.ibm.team.repository.client.ITeamRepository;
 import com.ibm.team.repository.client.TeamPlatform;
+import com.ibm.team.repository.client.internal.ItemManager;
 import com.ibm.team.repository.client.login.UsernameAndPasswordLoginInfo;
+import com.ibm.team.repository.client.util.IClientLibraryContext;
 import com.ibm.team.repository.common.IContributor;
+import com.ibm.team.repository.common.IContributorHandle;
 import com.ibm.team.repository.common.TeamRepositoryException;
-import com.ibm.team.workitem.client.IAuditableClient;
-import com.ibm.team.workitem.client.IQueryClient;
+import com.ibm.team.repository.common.query.IItemQuery;
+import com.ibm.team.repository.common.query.IItemQueryPage;
+import com.ibm.team.repository.common.query.ast.IItemQueryModel;
+import com.ibm.team.repository.common.query.ast.IPredicate;
+import com.ibm.team.repository.common.service.IQueryService;
 import com.ibm.team.workitem.client.IWorkItemClient;
-import com.ibm.team.workitem.common.expression.AttributeExpression;
-import com.ibm.team.workitem.common.expression.IQueryableAttribute;
-import com.ibm.team.workitem.common.expression.IQueryableAttributeFactory;
-import com.ibm.team.workitem.common.expression.QueryableAttributes;
-import com.ibm.team.workitem.common.expression.Term;
-import com.ibm.team.workitem.common.model.AttributeOperation;
+import com.ibm.team.workitem.common.internal.model.query.BaseWorkItemQueryModel;
 import com.ibm.team.workitem.common.model.IWorkItem;
-import com.ibm.team.workitem.common.query.IQueryResult;
-import com.ibm.team.workitem.common.query.IResolvedResult;
+import com.ibm.team.workitem.common.model.IWorkItemHandle;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.springframework.stereotype.Service;
@@ -39,6 +38,7 @@ import javax.naming.AuthenticationException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -91,58 +91,59 @@ public class RTCServiceImpl implements RTCService {
         return (IProjectArea) processClient.findProcessArea(uri, null, null);
     }
 
-    public List<WorkItem> getWorkItems(String projectAreaName, String sprint) {
+    public List<WorkItem> getWorkItems(String projectAreaName, String iterationName) {
         List<WorkItem> workItems = new ArrayList();
 
         try {
-            IProcessClientService processClient = (IProcessClientService) teamRepository
-                    .getClientLibrary(IProcessClientService.class);
-            IAuditableClient auditableClient = (IAuditableClient) teamRepository
-                    .getClientLibrary(IAuditableClient.class);
+//            IProcessClientService processClient = (IProcessClientService) teamRepository
+//                    .getClientLibrary(IProcessClientService.class);
+//            IAuditableClient auditableClient = (IAuditableClient) teamRepository
+//                    .getClientLibrary(IAuditableClient.class);
             IWorkItemClient workItemClient = (IWorkItemClient) teamRepository
                     .getClientLibrary(IWorkItemClient.class);
 
+            BaseWorkItemQueryModel queryModel = BaseWorkItemQueryModel.WorkItemQueryModel.ROOT;
+            IPredicate queryPredicate = queryModel.target().name()._eq(iterationName)
+                    ._and(
+                            queryModel.workItemType()._eq(WorkItemType.STORY.getTypeText())
+                            ._or(queryModel.workItemType()._eq(WorkItemType.DEFECT.getTypeText()))
+                            ._or(queryModel.workItemType()._eq(WorkItemType.EPIC.getTypeText()))
+//                            ._or(queryModel.workItemType()._eq(WorkItemType.TASK.getTypeText()))
+                    );
 
-            IProjectArea projectArea = getProjectArea(projectAreaName);
-            if (projectArea == null) {
-                throw new RuntimeException("Project area not found.");
-            }
+            IItemQuery query = IItemQuery.FACTORY.newInstance((IItemQueryModel)queryModel);
+            query.filter(queryPredicate);
 
-            List<IDevelopmentLine> developmentLines = teamRepository.itemManager().fetchCompleteItems(Arrays.asList(projectArea.getDevelopmentLines()), IItemManager.DEFAULT, null);
-            IIteration sprintHandle = null;
-            List<Iteration> iterations = new ArrayList();
+            IClientLibraryContext ctx = (IClientLibraryContext)teamRepository;
+            IQueryService queryService = (IQueryService)ctx.getServiceInterface(IQueryService.class);
 
-            for (IDevelopmentLine developmentLine : developmentLines) {
-                iterations.addAll(getIterations(Arrays.asList(developmentLine.getIterations())));
-                List<IIterationHandle> iterationHandles = Arrays.asList(developmentLine.getIterations());
-            }
+            IItemQueryPage qPage = queryService.queryItems(query, IQueryService.EMPTY_PARAMETERS, IQueryService.ITEM_QUERY_MAX_PAGE_SIZE);
 
-            for(Iteration iteration : iterations) {
-                if(iteration.getName().equals(sprint)){
-                    sprintHandle = iteration;
-                    break;
+            HashMap<String, String> statuss = new HashMap<String, String>();
+
+            if(qPage.getSize() > 0) {
+                List<IWorkItemHandle> workItemHandles = new ArrayList();
+                for(Object handle : qPage.getItemHandles()) {
+                    workItemHandles.add((IWorkItemHandle)handle);
                 }
-            }
 
-            IQueryableAttributeFactory factory= QueryableAttributes.getFactory(IWorkItem.ITEM_TYPE);
-            IQueryableAttribute projectAreaAttribute = factory.findAttribute(projectArea, IWorkItem.TARGET_PROPERTY, auditableClient, null);
-            AttributeExpression projectAreaExpression = new AttributeExpression(projectAreaAttribute, AttributeOperation.EQUALS, sprintHandle);
-            Term term = new Term(Term.Operator.AND);
-            term.add(projectAreaExpression);
+                List<IWorkItem> workItems1 = teamRepository.itemManager().fetchCompleteItems(workItemHandles, IItemManager.DEFAULT, null);
+                for(IWorkItem workItem : workItems1) {
+                    WorkItem wi = new WorkItem();
+                    wi.setId(Long.valueOf(workItem.getId()));
+                    wi.setTitle(workItem.getHTMLSummary().getPlainText());
+                    wi.setDescription(workItem.getHTMLDescription().getPlainText());
+                    wi.setOwner(getUser(workItem.getOwner()));
+                    wi.setStatus(getStatus(workItemClient, workItem));
+                    wi.setType(WorkItemType.fromString(workItem.getWorkItemType()));
+                    workItems.add(wi);
 
-            IQueryClient queryClient = (IQueryClient) teamRepository.getClientLibrary(IQueryClient.class);
-            IQueryResult<IResolvedResult<IWorkItem>> results = queryClient.getResolvedExpressionResults(projectArea, term, IWorkItem.FULL_PROFILE);
-
-            while(results.hasNext(null)){
-                IResolvedResult<IWorkItem> resolvedWorkItem = results.next(null);
-                IWorkItem workItem = resolvedWorkItem.getItem();
-
-                WorkItem wi = new WorkItem();
-                wi.setId(Long.valueOf(workItem.getId()));
-                wi.setTitle(workItem.getHTMLSummary().getPlainText());
-                wi.setDescription(workItem.getHTMLDescription().getPlainText());
-
-                workItems.add(wi);
+                    if(!statuss.containsKey(wi.getStatus()))
+                    {
+                        System.out.println(wi.getStatus());
+                        statuss.put(wi.getStatus(), wi.getStatus());
+                    }
+                }
             }
 
             return workItems;
@@ -152,6 +153,23 @@ public class RTCServiceImpl implements RTCService {
             throw new RuntimeException("Error getting work item.", ex);
         }
     }
+
+    private String getStatus(IWorkItemClient workItemClient, IWorkItem workItem) throws TeamRepositoryException {
+        return workItemClient.findWorkflowInfo(workItem, null).getStateName(workItem.getState2());
+    }
+
+    private User getUser(IContributorHandle contributorHandle) throws TeamRepositoryException {
+        User user = new User();
+
+        IContributor contributor = (IContributor)teamRepository.itemManager().fetchCompleteItem(contributorHandle, ItemManager.DEFAULT, null);
+        user.setId(contributor.getItemId().getUuidValue());
+        user.setName(contributor.getName());
+        user.setEmailAddress(contributor.getEmailAddress());
+        user.setUserId(contributor.getUserId());
+
+        return user;
+    }
+
 
     public List<ProjectArea> getProjectAreas() {
         List<ProjectArea> results = new ArrayList();

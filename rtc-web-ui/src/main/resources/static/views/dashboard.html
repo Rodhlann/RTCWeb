@@ -1,69 +1,118 @@
-<md-content layout="column" layout-fill>
-    <md-input-container>
-        <label>Project Area</label>
-        <md-select id="paSelect" ng-model="selectedProjectArea" ng-change="ctrl.getSprints()">
-            <md-option ng-repeat="projectArea in projectAreas" ng-value="projectArea">
-                {{projectArea.name}}
-            </md-option>
-        </md-select>
-    </md-input-container>
-    <md-input-container>
-        <label>Sprint</label>
-        <md-select id="sprintSelect" ng-model="selectedSprint" ng-change="ctrl.getWorkItems()" >
-            <md-option ng-repeat="sprint in sprints | orderBy : '-endDate'" ng-value="sprint.name">
-                {{sprint.name}}
-            </md-option>
-        </md-select>
-    </md-input-container>
-</md-content>
+<md-content layout="column" flex>
+    <md-content layout="row" flex="15">
+        <md-input-container flex>
+            <label>Project Area</label>
+            <md-select id="paSelect" ng-model="selectedProjectArea" ng-change="ctrl.getSprints()">
+                <md-option ng-repeat="projectArea in projectAreas" ng-value="projectArea">
+                    {{projectArea.name}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container flex>
+            <label>Sprint</label>
+            <md-select id="sprintSelect" ng-model="selectedSprint" ng-change="ctrl.getWorkItems()" >
+                <md-option ng-repeat="sprint in sprints | orderBy : '-endDate'" ng-value="sprint.name">
+                    {{sprint.name}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+    </md-content>
+    <md-content layout="row" flex="15">
+        <canvas class="chart chart-bar"
+                chart-data="chartData"
+                chart-labels="chartLabels"
+                chart-series="chartSeries">
+        </canvas>
+    </md-content>
 
-<md-content layout="column" layout-fill>
-    <md-grid-list>
-        <md-content layout="column" flex>
-            <md-card ng-repeat="workItem in workItems" flex>
-                <md-card-title>
-                    <md-card-title-text>
-                        <span>{{workItem.title}}</span>
-                    </md-card-title-text>
-                </md-card-title>
-                <md-card-content>
-                    <span>{{workItem.description}}</span>
-                </md-card-content>
-            </md-card>
+    <md-content layout="row" flex="70">
+        <md-content layout="column" flex="33">
+            RFD: {{RFD.length}}
+            <md-grid-list>
+                <md-card ng-repeat="workItem in workItems | filter: {status:'New'} || {status: 'Not Done'} || {status: 'Ready for Sizing'} || {status: 'Ready for Dev'} as RFD">
+                    <md-card-header>
+                        <md-card-header-text>
+                            <span class="md-title">{{workItem.id}}</span>
+                            <span class="md-subhead">{{workItem.owner.name}}</span>
+                            <span class="md-subhead">{{workItem.status}}</span>
+                            <span class="md-subhead">{{workItem.type}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span>{{workItem.title}}</span>
+                            <span>{{workItem.description}}</span>
+                        </md-card-title-text>
+                    </md-card-title>
+                    <md-card
+                </md-card>
+            </md-grid-list>
         </md-content>
-    </md-grid-list>
+        <md-content layout="column" flex="33">
+            In Progress: {{InProgress.length}}
+            <md-grid-list>
+                <md-card ng-repeat="workItem in workItems | filter: {status:'In Development'} || {status: 'In Progress'} || {status: 'In Scrum Test'} as InProgress">
+                    <md-card-header>
+                        <md-card-header-text>
+                            <span class="md-title">{{workItem.id}}</span>
+                            <span class="md-subhead">{{workItem.owner.name}}</span>
+                            <span class="md-subhead">{{workItem.status}}</span>
+                            <span class="md-subhead">{{workItem.type}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span>{{workItem.title}}</span>
+                            <span>{{workItem.description}}</span>
+                        </md-card-title-text>
+                    </md-card-title>
+                    <md-card
+                </md-card>
+            </md-grid-list>
+        </md-content>
+        <md-content layout="column" flex="33">
+            Done: {{Done.length}}
+            <md-grid-list>
+                <md-card ng-repeat="workItem in workItems | filter: {status:'Closed'} || {status: 'Delivered'} as Done">
+                    <md-card-header>
+                        <md-card-header-text>
+                            <span class="md-title">{{workItem.id}}</span>
+                            <span class="md-subhead">{{workItem.owner.name}}</span>
+                            <span class="md-subhead">{{workItem.status}}</span>
+                            <span class="md-subhead">{{workItem.type}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span>{{workItem.title}}</span>
+                            <span>{{workItem.description}}</span>
+                        </md-card-title-text>
+                    </md-card-title>
+                    <md-card
+                </md-card>
+            </md-grid-list>
+        </md-content>
+    </md-content>
+
+    <!--<md-content layout="row" flex="80">-->
+        <!--<md-grid-list md-cols="4">-->
+            <!--<md-card ng-repeat="workItem in workItems">-->
+                <!--<md-card-header>-->
+                    <!--<md-card-header-text>-->
+                        <!--<span class="md-title">{{workItem.id}}</span>-->
+                        <!--<span class="md-subhead">{{workItem.owner.name}}</span>-->
+                        <!--<span class="md-subhead">{{workItem.status}}</span>-->
+                        <!--<span class="md-subhead">{{workItem.type}}</span>-->
+                    <!--</md-card-header-text>-->
+                <!--</md-card-header>-->
+                <!--<md-card-title>-->
+                    <!--<md-card-title-text>-->
+                        <!--<span>{{workItem.title}}</span>-->
+                        <!--<span>{{workItem.description}}</span>-->
+                    <!--</md-card-title-text>-->
+                <!--</md-card-title>-->
+                <!--<md-card-->
+            <!--</md-card>-->
+        <!--</md-grid-list>-->
+    <!--</md-content>-->
 </md-content>
-<!--<md-content layout="column" layout-fill>-->
-    <!--<md-card ng-repeat="projectArea in projectAreas" ng-click="ctrl.getSprints(projectArea.name)">-->
-        <!--<md-card-title>-->
-            <!--<md-card-title-text>-->
-                <!--<span class="md-headline">{{projectArea.name}}</span>-->
-            <!--</md-card-title-text>-->
-        <!--</md-card-title>-->
-        <!--&lt;!&ndash;<md-card-actions layout="row" layout-align="end center">&ndash;&gt;-->
-            <!--&lt;!&ndash;<md-button>Action 1</md-button>&ndash;&gt;-->
-            <!--&lt;!&ndash;<md-button>Action 2</md-button>&ndash;&gt;-->
-        <!--&lt;!&ndash;</md-card-actions>&ndash;&gt;-->
-    <!--</md-card>-->
-    <!--<md-card ng-repeat="teamArea in teamAreas" ng-click="ctrl.getSprints(teamArea.name)">-->
-        <!--<md-card-title>-->
-            <!--<md-card-title-text>-->
-                <!--<span class="md-headline">{{teamArea.name}}</span>-->
-            <!--</md-card-title-text>-->
-        <!--</md-card-title>-->
-        <!--&lt;!&ndash;<md-card-actions layout="row" layout-align="end center">&ndash;&gt;-->
-            <!--&lt;!&ndash;<md-button>Action 1</md-button>&ndash;&gt;-->
-            <!--&lt;!&ndash;<md-button>Action 2</md-button>&ndash;&gt;-->
-        <!--&lt;!&ndash;</md-card-actions>&ndash;&gt;-->
-    <!--</md-card>-->
-<!--</md-content>-->
-<!--<md-content md-scroll-y>-->
-    <!--<md-card ng-repeat="sprint in sprints | orderBy:'-endDate'">-->
-        <!--<md-card-title>-->
-            <!--<md-card-title-text>-->
-                <!--<span class="md-headline">{{sprint.name}}</span>-->
-                <!--<span class="md-subhead">{{sprint.startDate | date:'shortDate'}} - {{sprint.endDate | date:'shortDate'}}</span>-->
-            <!--</md-card-title-text>-->
-        <!--</md-card-title>-->
-    <!--</md-card>-->
-<!--</md-content>-->

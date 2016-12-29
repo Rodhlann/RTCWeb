@@ -19,6 +19,8 @@
         <angular.js.version>1.6.0</angular.js.version>
         <angular.messages.version>1.6.0</angular.messages.version>
         <angular.ui.version>0.4.0-3</angular.ui.version>
+        <angular.chart.version>1.0.3</angular.chart.version>
+        <char.js.version>2.1.3</char.js.version>
         <bootstrap.version>3.3.7-1</bootstrap.version>
         <angular.material.version>1.1.1</angular.material.version>
         <angular.material.icons.version>0.7.0</angular.material.icons.version>
@@ -101,6 +103,16 @@
                 <artifactId>jquery</artifactId>
                 <version>${jquery.version}</version>
                 <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>chartjs</artifactId>
+                <version>${char.js.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>angular-chart.js</artifactId>
+                <version>${angular.chart.version}</version>
             </dependency>
 
             <!-- RTC API -->

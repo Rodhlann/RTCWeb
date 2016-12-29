@@ -10,6 +10,8 @@
         'ngMdIcons',
         'ngMessages',
 
+        'chart.js',
+
         'rtcWebApp.controllers',
         'rtcWebApp.services'
     ])
