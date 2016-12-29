@@ -12,6 +12,7 @@ public class WorkItem implements Serializable {
     private User owner;
     private String status;
     private WorkItemType type;
+    private String filedAgainst;
 
     public Long getId() {
         return id;
@@ -59,5 +60,13 @@ public class WorkItem implements Serializable {
 
     public void setType(WorkItemType type) {
         this.type = type;
+    }
+
+    public String getFiledAgainst() {
+        return filedAgainst;
+    }
+
+    public void setFiledAgainst(String filedAgainst) {
+        this.filedAgainst = filedAgainst;
     }
 }

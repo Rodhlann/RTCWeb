@@ -16,6 +16,15 @@
                 </md-option>
             </md-select>
         </md-input-container>
+        <md-input-container flex>
+            <label>Team</label>
+            <md-select id="teamSelect" ng-model="selectedTeam" ng-change="ctrl.getWorkItems()" >
+                <md-option>None</md-option>
+                <md-option ng-repeat="team in teamAreas | orderBy : 'name'" ng-value="team.name">
+                    {{team.name}}
+                </md-option>
+            </md-select>
+        </md-input-container>
     </md-content>
     <md-content layout="row" flex="15">
         <md-content layout="column" flex="50" layout-align="center">
@@ -32,7 +41,7 @@
             <md-grid-list>
                 <!-- TODO: Need to make Work Item Cards a Directive -->
                 <md-card ng-repeat="workItem in workItems | filter: {status:'New'} || {status: 'Not Done'} || {status: 'Ready for Sizing'} || {status: 'Ready for Dev'} as RFD"
-                         style="height: 125px">
+                         style="height: 200px">
                     <md-card-header>
                         <md-card-title-media flex="25">
                             <div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>
@@ -54,6 +63,7 @@
                     <md-card-title>
                         <md-card-title-text>
                             <span>{{workItem.title}}</span>
+                            <span>{{workItem.filedAgainst}}</span>
                         </md-card-title-text>
                     </md-card-title>
                 </md-card>
@@ -63,7 +73,7 @@
             In Progress: {{InProgress.length}}
             <md-grid-list>
                 <md-card ng-repeat="workItem in workItems | filter: {status:'In Development'} || {status: 'In Progress'} as InProgress"
-                         style="height: 125px">
+                         style="height: 200px">
                     <md-card-header>
                         <md-card-title-media flex="25">
                             <div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>
@@ -85,6 +95,7 @@
                     <md-card-title>
                         <md-card-title-text>
                             <span>{{workItem.title}}</span>
+                            <span>{{workItem.filedAgainst}}</span>
                         </md-card-title-text>
                     </md-card-title>
                 </md-card>
@@ -94,7 +105,7 @@
             IST: {{IST.length}}
             <md-grid-list>
                 <md-card ng-repeat="workItem in workItems | filter: {status:'In Scrum Test'} as IST"
-                         style="height: 125px">
+                         style="height: 200px">
                     <md-card-header>
                         <md-card-title-media flex="25">
                             <div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>
@@ -116,6 +127,7 @@
                     <md-card-title>
                         <md-card-title-text>
                             <span>{{workItem.title}}</span>
+                            <span>{{workItem.filedAgainst}}</span>
                         </md-card-title-text>
                     </md-card-title>
                 </md-card>
@@ -125,7 +137,7 @@
             Done: {{Done.length}}
             <md-grid-list>
                 <md-card ng-repeat="workItem in workItems | filter: {status:'Closed'} || {status: 'Delivered'} as Done"
-                         style="height: 125px">
+                         style="height: 200px">
                     <md-card-header>
                         <md-card-title-media flex="25">
                             <div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>
@@ -147,6 +159,7 @@
                     <md-card-title>
                         <md-card-title-text>
                             <span>{{workItem.title}}</span>
+                            <span>{{workItem.filedAgainst}}</span>
                         </md-card-title-text>
                     </md-card-title>
                 </md-card>

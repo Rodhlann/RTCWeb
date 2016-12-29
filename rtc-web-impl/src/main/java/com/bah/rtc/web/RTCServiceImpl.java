@@ -20,6 +20,7 @@ import com.ibm.team.repository.client.util.IClientLibraryContext;
 import com.ibm.team.repository.common.IContributor;
 import com.ibm.team.repository.common.IContributorHandle;
 import com.ibm.team.repository.common.TeamRepositoryException;
+import com.ibm.team.repository.common.internal.util.StringUtils;
 import com.ibm.team.repository.common.query.IItemQuery;
 import com.ibm.team.repository.common.query.IItemQueryPage;
 import com.ibm.team.repository.common.query.ast.IItemQueryModel;
@@ -27,6 +28,7 @@ import com.ibm.team.repository.common.query.ast.IPredicate;
 import com.ibm.team.repository.common.service.IQueryService;
 import com.ibm.team.workitem.client.IWorkItemClient;
 import com.ibm.team.workitem.common.internal.model.query.BaseWorkItemQueryModel;
+import com.ibm.team.workitem.common.model.ICategory;
 import com.ibm.team.workitem.common.model.IWorkItem;
 import com.ibm.team.workitem.common.model.IWorkItemHandle;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -90,7 +92,7 @@ public class RTCServiceImpl implements RTCService {
         return (IProjectArea) processClient.findProcessArea(uri, null, null);
     }
 
-    public List<WorkItem> getWorkItems(String projectAreaName, String iterationName) {
+    public List<WorkItem> getWorkItems(String projectAreaName, String iterationName, String teamName) {
         List<WorkItem> workItems = new ArrayList();
 
         try {
@@ -110,6 +112,14 @@ public class RTCServiceImpl implements RTCService {
 //                            ._or(queryModel.workItemType()._eq(WorkItemType.TASK.getTypeText()))
                     );
 
+            if(!StringUtils.isEmpty(teamName) && !teamName.equalsIgnoreCase("null") && !teamName.equalsIgnoreCase("none")) {
+//                queryPredicate = queryPredicate._and(queryModel.category().teamAreas()
+//                        ._contains(queryModel.category().teamAreas().name().equals(teamName)));
+                queryPredicate = queryPredicate._and(
+                        queryModel.category().name()._eq(teamName)
+                );
+            }
+
             IItemQuery query = IItemQuery.FACTORY.newInstance((IItemQueryModel)queryModel);
             query.filter(queryPredicate);
 
@@ -117,8 +127,6 @@ public class RTCServiceImpl implements RTCService {
             IQueryService queryService = (IQueryService)ctx.getServiceInterface(IQueryService.class);
 
             IItemQueryPage qPage = queryService.queryItems(query, IQueryService.EMPTY_PARAMETERS, IQueryService.ITEM_QUERY_MAX_PAGE_SIZE);
-
-//            HashMap<String, String> statuss = new HashMap<String, String>();
 
             if(qPage.getSize() > 0) {
                 List<IWorkItemHandle> workItemHandles = new ArrayList();
@@ -135,13 +143,8 @@ public class RTCServiceImpl implements RTCService {
                     wi.setOwner(getUser(workItem.getOwner()));
                     wi.setStatus(getStatus(workItemClient, workItem));
                     wi.setType(WorkItemType.fromString(workItem.getWorkItemType()));
+                    wi.setFiledAgainst(getFiledAgainst(workItem).getName());
                     workItems.add(wi);
-
-//                    if(!statuss.containsKey(wi.getStatus()))
-//                    {
-//                        System.out.println(wi.getStatus());
-//                        statuss.put(wi.getStatus(), wi.getStatus());
-//                    }
                 }
             }
 
@@ -151,6 +154,10 @@ public class RTCServiceImpl implements RTCService {
         {
             throw new RuntimeException("Error getting work item.", ex);
         }
+    }
+
+    private ICategory getFiledAgainst(IWorkItem workItem) throws TeamRepositoryException {
+        return (ICategory)teamRepository.itemManager().fetchCompleteItem(workItem.getCategory(), IItemManager.DEFAULT, null);
     }
 
     private String getStatus(IWorkItemClient workItemClient, IWorkItem workItem) throws TeamRepositoryException {

@@ -15,6 +15,7 @@
         $scope.today = new Date();
         $scope.selectedProjectArea = null;
         $scope.selectedSprint = null;
+        $scope.selectedTeam = null;
         $scope.RFD = null;
         $scope.InProgress = null;
         $scope.Done = null;
@@ -25,9 +26,8 @@
 
         self.getWorkItems = function() {
             progressService.showProgressBar();
-            rtcService.getWorkItems($scope.selectedProjectArea.name, $scope.selectedSprint).then(function(response){
+            rtcService.getWorkItems($scope.selectedProjectArea.name, $scope.selectedSprint, $scope.selectedTeam).then(function(response){
                 $scope.workItems = response.data;
-
 
                 $scope.closed = $filter('filter')($scope.workItems, {status: 'Closed'} || {status: 'Delivered'});
                 $scope.open = $filter('filter')($scope.workItems, {status: 'New'} || {status: 'Not Done'} || {status: 'Ready for Sizing'} || {status: 'Ready for Dev'});
@@ -80,6 +80,6 @@
         };
 
         self.getProjectAreas();
-        // self.getTeamAreas();
+        self.getTeamAreas();
     }
 })();

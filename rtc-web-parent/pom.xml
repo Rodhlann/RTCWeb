@@ -485,7 +485,6 @@
     </dependencyManagement>
     
     <modules>
-        <module>../rtc-web</module>
         <module>../rtc-web-api</module>
         <module>../rtc-web-impl</module>
         <module>../rtc-web-ui</module>
