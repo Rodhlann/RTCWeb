@@ -18,30 +18,49 @@
         </md-input-container>
     </md-content>
     <md-content layout="row" flex="15">
-        <canvas class="chart chart-bar"
-                chart-data="chartData"
-                chart-labels="chartLabels"
-                chart-series="chartSeries">
-        </canvas>
+        <md-content layout="column" flex="50" layout-align="center">
+            <canvas class="chart chart-bar" flex
+                    chart-data="chartData"
+                    chart-labels="chartLabels">
+            </canvas>
+        </md-content>
     </md-content>
 
     <md-content layout="row" flex="70">
         <md-content layout="column" flex="33">
             RFD: {{RFD.length}}
             <md-grid-list>
-                <md-card ng-repeat="workItem in workItems | filter: {status:'New'} || {status: 'Not Done'} || {status: 'Ready for Sizing'} || {status: 'Ready for Dev'} as RFD">
+                <md-card ng-repeat="workItem in workItems | filter: {status:'New'} || {status: 'Not Done'} || {status: 'Ready for Sizing'} || {status: 'Ready for Dev'} as RFD"
+                         style="height: 125px">
                     <md-card-header>
-                        <md-card-header-text>
-                            <span class="md-title">{{workItem.id}}</span>
-                            <span class="md-subhead">{{workItem.owner.name}}</span>
-                            <span class="md-subhead">{{workItem.status}}</span>
-                            <span class="md-subhead">{{workItem.type}}</span>
+                        <md-card-title-media flex="25">
+                            <div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>
+                            <div ng-if="workItem.type == 'STORY'" class="md-media-sm card-media mdi mdi-24px mdi-book-open-page-variant"></div>
+                            <div ng-if="workItem.type == 'EPIC'" class="md-media-sm card-media mdi mdi-24px mdi-book"></div>
+                        </md-card-title-media>
+                        <md-card-header-text layout="row">
+                            <div layout="column" flex="25">
+                                <span>{{workItem.id}}</span>
+                            </div>
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span layout="column" flex="25">{{workItem.type}}</span>-->
+                            <!--</div>-->
+                            <div layout="column" flex="25">
+                                <span layout="column" flex="25">{{workItem.status}}</span>
+                            </div>
+                            <div layout="column" flex="25">
+                                <span layout="column" flex="25">{{workItem.owner.name}}</span>
+                            </div>
+                            <!--<span class="md-title">{{workItem.id}}</span>-->
+                            <!--<span layout="column" flex="33" >{{workItem.type}}</span>-->
+                            <!--<span layout="column" flex="33" >{{workItem.status}}</span>-->
+                            <!--<span layout="column" flex="33" >{{workItem.owner.name}}</span>-->
                         </md-card-header-text>
                     </md-card-header>
                     <md-card-title>
                         <md-card-title-text>
                             <span>{{workItem.title}}</span>
-                            <span>{{workItem.description}}</span>
+                            <!--<span>{{workItem.description}}</span>-->
                         </md-card-title-text>
                     </md-card-title>
                     <md-card

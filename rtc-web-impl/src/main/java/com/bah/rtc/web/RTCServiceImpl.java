@@ -38,7 +38,6 @@ import javax.naming.AuthenticationException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -119,7 +118,7 @@ public class RTCServiceImpl implements RTCService {
 
             IItemQueryPage qPage = queryService.queryItems(query, IQueryService.EMPTY_PARAMETERS, IQueryService.ITEM_QUERY_MAX_PAGE_SIZE);
 
-            HashMap<String, String> statuss = new HashMap<String, String>();
+//            HashMap<String, String> statuss = new HashMap<String, String>();
 
             if(qPage.getSize() > 0) {
                 List<IWorkItemHandle> workItemHandles = new ArrayList();
@@ -138,11 +137,11 @@ public class RTCServiceImpl implements RTCService {
                     wi.setType(WorkItemType.fromString(workItem.getWorkItemType()));
                     workItems.add(wi);
 
-                    if(!statuss.containsKey(wi.getStatus()))
-                    {
-                        System.out.println(wi.getStatus());
-                        statuss.put(wi.getStatus(), wi.getStatus());
-                    }
+//                    if(!statuss.containsKey(wi.getStatus()))
+//                    {
+//                        System.out.println(wi.getStatus());
+//                        statuss.put(wi.getStatus(), wi.getStatus());
+//                    }
                 }
             }
 

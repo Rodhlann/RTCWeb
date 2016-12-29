@@ -41,18 +41,20 @@
                 // $scope.closed = $filter('filterDone')($scope.workItems, {status: 'Closed'} || {status: 'Delivered'});
 
                 $scope.chartData = [];
-                $scope.chartData.push($scope.closed);
-                $scope.chartData.push($scope.open);
-                $scope.chartData.push($scope.working);
+                $scope.chartData.push($scope.open.length);
+                $scope.chartData.push($scope.working.length);
+                $scope.chartData.push($scope.closed.length);
 
                 // $scope.chartData.push($filter('RFD')($scope.workItems, {status:'New'} || {status: 'Not Done'} || {status: 'Ready for Sizing'} || {status: 'Ready for Dev'}));
                 // $scope.chartData.push($filter('InProgress')($scope.workItems, {status:'In Development'} || {status: 'In Progress'} || {status: 'In Scrum Test'}));
                 // $scope.chartData.push($filter('Done')($scope.workItems, {status:'Closed'} || {status: 'Delivered'}));
 
                 $scope.chartLabels = [];
-                $scope.chartLabels.push('RFD');
+                $scope.chartLabels.push('Ready For Dev');
                 $scope.chartLabels.push('In Progress');
                 $scope.chartLabels.push('Done');
+
+                $scope.chartSeries.push(['RFD', 'IP', 'Done']);
 
                 progressService.hideProgressBar();
             }, function(response) {
