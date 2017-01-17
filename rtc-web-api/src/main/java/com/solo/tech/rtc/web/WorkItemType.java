@@ -7,7 +7,7 @@ public enum WorkItemType {
     STORY("com.ibm.team.apt.workItemType.story"),
     TASK("task"),
     EPIC("com.ibm.team.apt.workItemType.epic"),
-    DEFECT("com.ibm.team.workitem.workItemType.defect"),
+    DEFECT("com.ibm.team.workItemType.defect"),
     UNKNOWN("unknown");
 
     private String typeText;

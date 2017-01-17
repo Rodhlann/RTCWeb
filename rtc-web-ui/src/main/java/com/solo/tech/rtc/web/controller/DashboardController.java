@@ -1,5 +1,6 @@
 package com.solo.tech.rtc.web.controller;
 
+import com.solo.tech.rtc.web.Category;
 import com.solo.tech.rtc.web.ProjectArea;
 import com.solo.tech.rtc.web.RTCService;
 import com.solo.tech.rtc.web.Sprint;
@@ -37,4 +38,8 @@ public class DashboardController {
     @RequestMapping(path = "/getSprints", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Sprint> getSprints(String projectAreaName) { return rtcService.getSprints(projectAreaName); }
+
+    @RequestMapping(path = "/getCategories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Category> getCategories(String projectAreaName) { return rtcService.getCategories(projectAreaName); }
 }

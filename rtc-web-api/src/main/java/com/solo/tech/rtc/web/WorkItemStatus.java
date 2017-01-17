@@ -34,4 +34,9 @@ public enum WorkItemStatus {
 
         return status;
     }
+
+    @Override
+    public String toString() {
+        return statusText;
+    }
 }

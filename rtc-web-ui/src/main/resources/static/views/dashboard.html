@@ -1,5 +1,5 @@
 <md-content layout="column" flex>
-    <md-content layout="row" flex="15">
+    <md-content layout="row">
         <md-input-container flex>
             <label>Project Area</label>
             <md-select id="paSelect" ng-model="selectedProjectArea" ng-change="ctrl.getSprints()">
@@ -10,23 +10,30 @@
         </md-input-container>
         <md-input-container flex>
             <label>Sprint</label>
-            <md-select id="sprintSelect" ng-model="selectedSprint" ng-change="ctrl.getWorkItems()" >
+            <md-select id="sprintSelect" ng-model="selectedSprint" ng-change="ctrl.getWorkItems()">
+                <md-option value="current">Current</md-option>
                 <md-option ng-repeat="sprint in sprints | orderBy : '-endDate'" ng-value="sprint.name">
                     {{sprint.name}}
                 </md-option>
             </md-select>
         </md-input-container>
         <md-input-container flex>
-            <label>Team</label>
+            <label>Filed Against</label>
             <md-select id="teamSelect" ng-model="selectedTeam" ng-change="ctrl.getWorkItems()" >
                 <md-option>None</md-option>
-                <md-option ng-repeat="team in teamAreas | orderBy : 'name'" ng-value="team.name">
-                    {{team.name}}
+                <md-option ng-repeat="category in categories | orderBy : 'name'" ng-value="category.name">
+                    {{category.name}}
                 </md-option>
             </md-select>
         </md-input-container>
     </md-content>
-    <md-content layout="row" flex="15">
+
+    <md-content layout="row">
+        <md-chips ng-model="selectedTags" placeholder="Enter a tag"></md-chips>
+    </md-content>
+
+    <md-content layout="row">
+        Stories
         <md-content layout="column" flex="50" layout-align="center">
             <canvas class="chart chart-bar" flex
                     chart-data="chartData"
@@ -35,135 +42,145 @@
         </md-content>
     </md-content>
 
-    <md-content layout="row" flex="70">
-        <md-content layout="column" flex="25">
-            RFD: {{RFD.length}}
-            <md-grid-list>
-                <!-- TODO: Need to make Work Item Cards a Directive -->
-                <md-card ng-repeat="workItem in workItems | filter: {status:'New'} || {status: 'Not Done'} || {status: 'Ready for Sizing'} || {status: 'Ready for Dev'} as RFD"
-                         style="height: 200px">
-                    <md-card-header>
-                        <md-card-title-media flex="25">
-                            <div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>
-                            <div ng-if="workItem.type == 'STORY'" class="md-media-sm card-media mdi mdi-24px mdi-book-open-page-variant"></div>
-                            <div ng-if="workItem.type == 'EPIC'" class="md-media-sm card-media mdi mdi-24px mdi-book"></div>
-                        </md-card-title-media>
-                        <md-card-header-text layout="row">
-                            <div layout="column" flex="25">
-                                <span>{{workItem.id}}</span>
-                            </div>
-                            <div layout="column" flex="25">
-                                <span layout="column" flex="25">{{workItem.status}}</span>
-                            </div>
-                            <div layout="column" flex="25">
-                                <span layout="column" flex="25">{{workItem.owner.name}}</span>
-                            </div>
-                        </md-card-header-text>
-                    </md-card-header>
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span>{{workItem.title}}</span>
-                            <span>{{workItem.filedAgainst}}</span>
-                        </md-card-title-text>
-                    </md-card-title>
-                </md-card>
-            </md-grid-list>
-        </md-content>
-        <md-content layout="column" flex="25">
-            In Progress: {{InProgress.length}}
-            <md-grid-list>
-                <md-card ng-repeat="workItem in workItems | filter: {status:'In Development'} || {status: 'In Progress'} as InProgress"
-                         style="height: 200px">
-                    <md-card-header>
-                        <md-card-title-media flex="25">
-                            <div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>
-                            <div ng-if="workItem.type == 'STORY'" class="md-media-sm card-media mdi mdi-24px mdi-book-open-page-variant"></div>
-                            <div ng-if="workItem.type == 'EPIC'" class="md-media-sm card-media mdi mdi-24px mdi-book"></div>
-                        </md-card-title-media>
-                        <md-card-header-text layout="row">
-                            <div layout="column" flex="25">
-                                <span>{{workItem.id}}</span>
-                            </div>
-                            <div layout="column" flex="25">
-                                <span layout="column" flex="25">{{workItem.status}}</span>
-                            </div>
-                            <div layout="column" flex="25">
-                                <span layout="column" flex="25">{{workItem.owner.name}}</span>
-                            </div>
-                        </md-card-header-text>
-                    </md-card-header>
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span>{{workItem.title}}</span>
-                            <span>{{workItem.filedAgainst}}</span>
-                        </md-card-title-text>
-                    </md-card-title>
-                </md-card>
-            </md-grid-list>
-        </md-content>
-        <md-content layout="column" flex="25">
-            IST: {{IST.length}}
-            <md-grid-list>
-                <md-card ng-repeat="workItem in workItems | filter: {status:'In Scrum Test'} as IST"
-                         style="height: 200px">
-                    <md-card-header>
-                        <md-card-title-media flex="25">
-                            <div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>
-                            <div ng-if="workItem.type == 'STORY'" class="md-media-sm card-media mdi mdi-24px mdi-book-open-page-variant"></div>
-                            <div ng-if="workItem.type == 'EPIC'" class="md-media-sm card-media mdi mdi-24px mdi-book"></div>
-                        </md-card-title-media>
-                        <md-card-header-text layout="row">
-                            <div layout="column" flex="25">
-                                <span>{{workItem.id}}</span>
-                            </div>
-                            <div layout="column" flex="25">
-                                <span layout="column" flex="25">{{workItem.status}}</span>
-                            </div>
-                            <div layout="column" flex="25">
-                                <span layout="column" flex="25">{{workItem.owner.name}}</span>
-                            </div>
-                        </md-card-header-text>
-                    </md-card-header>
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span>{{workItem.title}}</span>
-                            <span>{{workItem.filedAgainst}}</span>
-                        </md-card-title-text>
-                    </md-card-title>
-                </md-card>
-            </md-grid-list>
-        </md-content>
-        <md-content layout="column" flex="25">
-            Done: {{Done.length}}
-            <md-grid-list>
-                <md-card ng-repeat="workItem in workItems | filter: {status:'Closed'} || {status: 'Delivered'} as Done"
-                         style="height: 200px">
-                    <md-card-header>
-                        <md-card-title-media flex="25">
-                            <div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>
-                            <div ng-if="workItem.type == 'STORY'" class="md-media-sm card-media mdi mdi-24px mdi-book-open-page-variant"></div>
-                            <div ng-if="workItem.type == 'EPIC'" class="md-media-sm card-media mdi mdi-24px mdi-book"></div>
-                        </md-card-title-media>
-                        <md-card-header-text layout="row">
-                            <div layout="column" flex="25">
-                                <span>{{workItem.id}}</span>
-                            </div>
-                            <div layout="column" flex="25">
-                                <span layout="column" flex="25">{{workItem.status}}</span>
-                            </div>
-                            <div layout="column" flex="25">
-                                <span layout="column" flex="25">{{workItem.owner.name}}</span>
-                            </div>
-                        </md-card-header-text>
-                    </md-card-header>
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span>{{workItem.title}}</span>
-                            <span>{{workItem.filedAgainst}}</span>
-                        </md-card-title-text>
-                    </md-card-title>
-                </md-card>
-            </md-grid-list>
+    <md-content layout="row">
+        Defects
+        <md-content layout="column" flex="50" layout-align="center">
+            <canvas class="chart chart-bar" flex
+                    chart-data="defectChartData"
+                    chart-labels="chartLabels">
+            </canvas>
         </md-content>
     </md-content>
+
+    <!--<md-content layout="row" flex="70">-->
+        <!--<md-content layout="column" flex="25">-->
+            <!--RFD: {{rfdWorkItems.length}}-->
+            <!--<md-grid-list>-->
+                <!--&lt;!&ndash; TODO: Need to make Work Item Cards a Directive &ndash;&gt;-->
+                <!--<md-card ng-repeat="workItem in rfdWorkItems"-->
+                         <!--style="height: 200px">-->
+                    <!--<md-card-header>-->
+                        <!--<md-card-title-media flex="25">-->
+                            <!--<div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>-->
+                            <!--<div ng-if="workItem.type == 'STORY'" class="md-media-sm card-media mdi mdi-24px mdi-book-open-page-variant"></div>-->
+                            <!--<div ng-if="workItem.type == 'EPIC'" class="md-media-sm card-media mdi mdi-24px mdi-book"></div>-->
+                        <!--</md-card-title-media>-->
+                        <!--<md-card-header-text layout="row">-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span>{{workItem.id}}</span>-->
+                            <!--</div>-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span layout="column" flex="25">{{workItem.status}}</span>-->
+                            <!--</div>-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span layout="column" flex="25">{{workItem.owner.name}}</span>-->
+                            <!--</div>-->
+                        <!--</md-card-header-text>-->
+                    <!--</md-card-header>-->
+                    <!--<md-card-title>-->
+                        <!--<md-card-title-text>-->
+                            <!--<span>{{workItem.title}}</span>-->
+                            <!--<span>{{workItem.filedAgainst}}</span>-->
+                        <!--</md-card-title-text>-->
+                    <!--</md-card-title>-->
+                <!--</md-card>-->
+            <!--</md-grid-list>-->
+        <!--</md-content>-->
+        <!--<md-content layout="column" flex="25">-->
+            <!--In Progress: {{inProgressWorkItems.length}}-->
+            <!--<md-grid-list>-->
+                <!--<md-card ng-repeat="workItem in inProgressWorkItems"-->
+                         <!--style="height: 200px">-->
+                    <!--<md-card-header>-->
+                        <!--<md-card-title-media flex="25">-->
+                            <!--<div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>-->
+                            <!--<div ng-if="workItem.type == 'STORY'" class="md-media-sm card-media mdi mdi-24px mdi-book-open-page-variant"></div>-->
+                            <!--<div ng-if="workItem.type == 'EPIC'" class="md-media-sm card-media mdi mdi-24px mdi-book"></div>-->
+                        <!--</md-card-title-media>-->
+                        <!--<md-card-header-text layout="row">-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span>{{workItem.id}}</span>-->
+                            <!--</div>-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span layout="column" flex="25">{{workItem.status}}</span>-->
+                            <!--</div>-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span layout="column" flex="25">{{workItem.owner.name}}</span>-->
+                            <!--</div>-->
+                        <!--</md-card-header-text>-->
+                    <!--</md-card-header>-->
+                    <!--<md-card-title>-->
+                        <!--<md-card-title-text>-->
+                            <!--<span>{{workItem.title}}</span>-->
+                            <!--<span>{{workItem.filedAgainst}}</span>-->
+                        <!--</md-card-title-text>-->
+                    <!--</md-card-title>-->
+                <!--</md-card>-->
+            <!--</md-grid-list>-->
+        <!--</md-content>-->
+        <!--<md-content layout="column" flex="25">-->
+            <!--IST: {{inScrumTestWorkItems.length}}-->
+            <!--<md-grid-list>-->
+                <!--<md-card ng-repeat="workItem in inScrumTestWorkItems"-->
+                         <!--style="height: 200px">-->
+                    <!--<md-card-header>-->
+                        <!--<md-card-title-media flex="25">-->
+                            <!--<div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>-->
+                            <!--<div ng-if="workItem.type == 'STORY'" class="md-media-sm card-media mdi mdi-24px mdi-book-open-page-variant"></div>-->
+                            <!--<div ng-if="workItem.type == 'EPIC'" class="md-media-sm card-media mdi mdi-24px mdi-book"></div>-->
+                        <!--</md-card-title-media>-->
+                        <!--<md-card-header-text layout="row">-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span>{{workItem.id}}</span>-->
+                            <!--</div>-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span layout="column" flex="25">{{workItem.status}}</span>-->
+                            <!--</div>-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span layout="column" flex="25">{{workItem.owner.name}}</span>-->
+                            <!--</div>-->
+                        <!--</md-card-header-text>-->
+                    <!--</md-card-header>-->
+                    <!--<md-card-title>-->
+                        <!--<md-card-title-text>-->
+                            <!--<span>{{workItem.title}}</span>-->
+                            <!--<span>{{workItem.filedAgainst}}</span>-->
+                        <!--</md-card-title-text>-->
+                    <!--</md-card-title>-->
+                <!--</md-card>-->
+            <!--</md-grid-list>-->
+        <!--</md-content>-->
+        <!--<md-content layout="column" flex="25">-->
+            <!--Done: {{doneWorkItems.length}}-->
+            <!--<md-grid-list>-->
+                <!--<md-card ng-repeat="workItem in doneWorkItems"-->
+                         <!--style="height: 200px">-->
+                    <!--<md-card-header>-->
+                        <!--<md-card-title-media flex="25">-->
+                            <!--<div ng-if="workItem.type == 'DEFECT'" class="md-media-sm card-media mdi mdi-24px mdi-bug"></div>-->
+                            <!--<div ng-if="workItem.type == 'STORY'" class="md-media-sm card-media mdi mdi-24px mdi-book-open-page-variant"></div>-->
+                            <!--<div ng-if="workItem.type == 'EPIC'" class="md-media-sm card-media mdi mdi-24px mdi-book"></div>-->
+                        <!--</md-card-title-media>-->
+                        <!--<md-card-header-text layout="row">-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span>{{workItem.id}}</span>-->
+                            <!--</div>-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span layout="column" flex="25">{{workItem.status}}</span>-->
+                            <!--</div>-->
+                            <!--<div layout="column" flex="25">-->
+                                <!--<span layout="column" flex="25">{{workItem.owner.name}}</span>-->
+                            <!--</div>-->
+                        <!--</md-card-header-text>-->
+                    <!--</md-card-header>-->
+                    <!--<md-card-title>-->
+                        <!--<md-card-title-text>-->
+                            <!--<span>{{workItem.title}}</span>-->
+                            <!--<span>{{workItem.filedAgainst}}</span>-->
+                        <!--</md-card-title-text>-->
+                    <!--</md-card-title>-->
+                <!--</md-card>-->
+            <!--</md-grid-list>-->
+        <!--</md-content>-->
+    <!--</md-content>-->
 </md-content>

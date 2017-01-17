@@ -23,5 +23,9 @@
         self.getSprints = function(projectAreaName) {
             return $http.get(api.dashboard + 'getSprints?projectAreaName=' + projectAreaName);
         };
+
+        self.getCategories = function(projectAreaName) {
+            return $http.get(api.dashboard + 'getCategories?projectAreaName=' + projectAreaName);
+        }
     }
 })();

@@ -23,7 +23,7 @@ public class WorkItemController {
 
     @RequestMapping(path = "/findBySprint", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<WorkItem> getWorkItem(@RequestParam final String projectArea, @RequestParam final String sprint, @RequestParam final String team) {
-        return rtcService.getWorkItems(projectArea, sprint, team);
+    public List<WorkItem> getWorkItem(@RequestParam final String projectArea, @RequestParam final String sprint, @RequestParam final String team, @RequestParam final List<String> tags) {
+        return rtcService.getWorkItems(projectArea, sprint, team, tags);
     }
 }

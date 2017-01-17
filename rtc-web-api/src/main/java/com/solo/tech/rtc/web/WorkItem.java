@@ -10,7 +10,7 @@ public class WorkItem implements Serializable {
     private String title;
     private String description;
     private User owner;
-    private String status;
+    private WorkItemStatus status;
     private WorkItemType type;
     private String filedAgainst;
 
@@ -46,11 +46,11 @@ public class WorkItem implements Serializable {
         this.owner = owner;
     }
 
-    public String getStatus() {
+    public WorkItemStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(WorkItemStatus status) {
         this.status = status;
     }
 
