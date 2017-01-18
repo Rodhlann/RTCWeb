@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 mvn install:install-file -Dfile="apache-mime4j-0.6.jar" -DgroupId=com.ibm.rtc -DartifactId="apache-mime4j-0.6" -Dversion=5.0.2 -Dpackaging=jar
 mvn install:install-file -Dfile="com.ibm.icu_4.2.1.v20100412.jar" -DgroupId=com.ibm.rtc -DartifactId="com.ibm.icu_4.2.1.v20100412" -Dversion=5.0.2 -Dpackaging=jar
 mvn install:install-file -Dfile="com.ibm.rational.wvcm.ct_3.0.900.v20140703_1449.jar" -DgroupId=com.ibm.rtc -DartifactId="com.ibm.rational.wvcm.ct_3.0.900.v20140703_1449" -Dversion=5.0.2 -Dpackaging=jar
