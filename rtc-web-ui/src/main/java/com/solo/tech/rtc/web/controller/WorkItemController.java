@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public class WorkItemController {
 
     @RequestMapping(path = "/findBySprint", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<WorkItem> getWorkItem(@RequestParam final String projectArea, @RequestParam final String sprint, @RequestParam final String team, @RequestParam final List<String> tags) {
-        return rtcService.getWorkItems(projectArea, sprint, team, tags);
+    public List<WorkItem> getWorkItem(@RequestParam final String projectArea, @RequestParam final String sprint, @RequestParam final String team, @RequestParam final String[] tags) {
+        return rtcService.getWorkItems(projectArea, sprint, team, Arrays.asList(tags));
     }
 }

@@ -8,8 +8,8 @@
     function RTCWebService($http, api) {
         var self = this;
 
-        self.getWorkItems = function(projectArea, sprint, team) {
-            return $http.get(api.workitem + 'findBySprint?projectArea=' + projectArea + '&sprint=' + sprint + '&team=' + team);
+        self.getWorkItems = function(projectArea, sprint, team, tags) {
+            return $http.get(api.workitem + 'findBySprint?projectArea=' + projectArea + '&sprint=' + sprint + '&team=' + team + '&tags=' +  tags);
         };
 
         self.getProjectAreas = function() {

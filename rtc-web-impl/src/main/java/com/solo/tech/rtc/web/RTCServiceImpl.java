@@ -167,23 +167,24 @@ public class RTCServiceImpl implements RTCService {
             }
 
             BaseWorkItemQueryModel queryModel = BaseWorkItemQueryModel.WorkItemQueryModel.ROOT;
+
             IPredicate queryPredicate = queryModel.target().name()._in(selectedIterations)
                     ._and(
                             queryModel.workItemType()._eq(WorkItemType.STORY.getTypeText())
                             ._or(queryModel.workItemType()._eq(WorkItemType.DEFECT.getTypeText()))
                             ._or(queryModel.workItemType()._eq(WorkItemType.EPIC.getTypeText()))
-//                            ._or(queryModel.workItemType()._eq(WorkItemType.TASK.getTypeText()))
                     );
 
             if(!StringUtils.isEmpty(teamName) && !teamName.equalsIgnoreCase("null") && !teamName.equalsIgnoreCase("none")) {
                 queryPredicate = queryPredicate._and(
-                        queryModel.category().name()._like(teamName)
+                        queryModel.category().name()._eq(teamName)
                 );
             }
 
             if(!CollectionUtils.isEmpty(tags)) {
-                queryPredicate._and(
-                        queryModel.internalTags()._in((String[]) tags.toArray())
+                queryPredicate = queryPredicate._and(
+//                        queryModel.internalTags()._in((String[])tags.toArray())
+                        queryModel.internalTags()._eq(String.format("|%s|", tags.stream().collect(Collectors.joining("|"))))
                 );
             }
 

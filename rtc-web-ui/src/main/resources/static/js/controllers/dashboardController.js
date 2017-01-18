@@ -28,7 +28,7 @@
 
         self.getWorkItems = function() {
             progressService.showProgressBar();
-            rtcService.getWorkItems($scope.selectedProjectArea.name, $scope.selectedSprint, $scope.selectedTeam).then(function(response){
+            rtcService.getWorkItems($scope.selectedProjectArea.name, $scope.selectedSprint, $scope.selectedTeam, $scope.selectedTags).then(function(response){
                 $scope.workItems = response.data;
 
                 $scope.doneWorkItems = $filter('filter')($scope.workItems, {status: 'DONE', type: '!DEFECT'});
@@ -115,6 +115,10 @@
                 progressService.hideProgressBar();
             });
         }
+
+        $scope.$watch('selectedTags', function() {
+            self.getWorkItems();
+        }, true);
 
         self.getProjectAreas();
         self.getTeamAreas();
