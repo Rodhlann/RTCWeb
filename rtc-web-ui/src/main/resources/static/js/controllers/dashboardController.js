@@ -4,6 +4,14 @@
     angular
         .module('rtcWebApp.controllers')
         .controller('dashboard', ['$scope', '$filter', 'rtcWebApp.services.rtcWebAppService', 'rtcWebApp.services.progressService', DashboardController])
+        .directive('rtcWorkItemDirective', RtcWorkItemDirective);
+
+    function RtcWorkItemDirective() {
+        return {
+            restrict: 'E',
+            templateUrl: '/views/workItemTemplate.html'
+        };
+    }
 
     function DashboardController($scope, $filter, rtcService, progressService) {
         var self = this;
